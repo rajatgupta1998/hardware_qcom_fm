@@ -482,10 +482,14 @@ public class FMRadioService extends Service
 
                         if (mAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
                             mAudioTrack.stop();
+                            mAudioTrack.release();
+                            Log.d(LOGTAG, "RecordSinkThread: mAudioTrack.release() completed");
                         }
 
                         if (mAudioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
                             mAudioRecord.stop();
+                            mAudioRecord.release();
+                            Log.d(LOGTAG, "RecordSinkThread: mAudioRecord.release() completed");
                         }
 
                         synchronized (mRecordSinkLock) {
@@ -498,9 +502,13 @@ public class FMRadioService extends Service
             } finally {
                 if (mAudioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
                     mAudioRecord.stop();
+                    mAudioRecord.release();
+                    Log.d(LOGTAG, "RecordSinkThread: mAudioRecord.release() completed");
                 }
                 if (mAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
                     mAudioTrack.stop();
+                    mAudioTrack.release();
+                    Log.d(LOGTAG, "RecordSinkThread: mAudioTrack.release() completed");
                 }
             }
         }
