@@ -484,10 +484,14 @@ public class FMRadioService extends Service
 
                         if (mAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
                             mAudioTrack.stop();
+                            mAudioTrack.release();
+                            Log.d(LOGTAG, "RecordSinkThread: mAudioTrack.release() completed");
                         }
 
                         if (mAudioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
                             mAudioRecord.stop();
+                            mAudioRecord.release();
+                            Log.d(LOGTAG, "RecordSinkThread: mAudioRecord.release() completed");
                         }
 
                         synchronized (mRecordSinkLock) {
@@ -500,9 +504,13 @@ public class FMRadioService extends Service
             } finally {
                 if (mAudioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
                     mAudioRecord.stop();
+                    mAudioRecord.release();
+                    Log.d(LOGTAG, "RecordSinkThread: mAudioRecord.release() completed");
                 }
                 if (mAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
                     mAudioTrack.stop();
+                    mAudioTrack.release();
+                    Log.d(LOGTAG, "RecordSinkThread: mAudioTrack.release() completed");
                 }
             }
         }
@@ -1155,6 +1163,8 @@ public class FMRadioService extends Service
 
        mStoppedOnFocusLoss = false;
 
+       Log.d(LOGTAG,"A2dpConnected:"+ mA2dpConnected +" mStoppedOnFactoryReset:"+
+                   mStoppedOnFactoryReset+" mSpeakerPhoneOn:"+mSpeakerPhoneOn);
        if (mStoppedOnFactoryReset) {
            mStoppedOnFactoryReset = false;
            mSpeakerPhoneOn = false;
@@ -1163,6 +1173,9 @@ public class FMRadioService extends Service
                String temp = mA2dpConnected ? "A2DP HS" : "Speaker";
                Log.d(LOGTAG, "Route audio to " + temp);
                AudioSystem.setForceUse(AudioSystem.FOR_MEDIA, AudioSystem.FORCE_SPEAKER);
+       } else if(mA2dpConnected) {
+               Log.d(LOGTAG, "A2dpConnected while SpeakerPhone is disbaled de-select BT Headset");
+               AudioSystem.setForceUse(AudioSystem.FOR_MEDIA, AudioSystem.FORCE_NO_BT_A2DP);
        }
 
        mPlaybackInProgress = true;
